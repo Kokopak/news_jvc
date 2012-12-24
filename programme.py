@@ -18,39 +18,43 @@ categories = {
 "ANDROID": "http://www.jeuxvideo.com/android.htm",
 "WEB": "http://www.jeuxvideo.com/actualite-jeux-en-ligne.htm"}
 
-for keys in categories:
-    print keys, 
-print
-print
-choix_categorie = raw_input("Choisissez parmi les catégories ci-dessus : ")
-
-while not categories.has_key(choix_categorie):
-    print "Catégorie non-existante !"
+def launch_console():
+    for keys in categories:
+        print keys +  " |", 
+    print
+    print
     choix_categorie = raw_input("Choisissez parmi les catégories ci-dessus : ")
 
+    while not categories.has_key(choix_categorie):
+        print "Catégorie non-existante !"
+        choix_categorie = raw_input("Choisissez parmi les catégories ci-dessus : ")
 
 
-print "Chargement des news..."
 
-f = urllib2.urlopen(categories[choix_categorie])
-soup = BeautifulSoup(f)
-f.close()
+    print "Chargement des news..."
+
+def genNews(categorie):
+
+    f = urllib2.urlopen(categories[categorie])
+    soup = BeautifulSoup(f)
+    f.close()
 
 
-liste_ul = soup.findAll("ul", attrs={"class": "liste_liens"})
+    liste_ul = soup.findAll("ul", attrs={"class": "liste_liens"})
 
-liste_news = []
+    liste_news = []
 
-for ul in liste_ul:
-    for li in ul.findAll("li"):
-        for a in li.findAll("a"):
-            if "news" in str(a):
-                if len(a.attrs) > 1:
-                    title = a["title"]
-                    liste_news.append((" "+title,a["href"]))
-                else:
-                    liste_news.append((a.string,a["href"]))
+    for ul in liste_ul:
+        for li in ul.findAll("li"):
+            for a in li.findAll("a"):
+                if "news" in str(a):
+                    if len(a.attrs) > 1:
+                        title = a["title"]
+                        liste_news.append((" "+title,a["href"]))
+                    else:
+                        liste_news.append((a.string,a["href"]))
+    return liste_news
 
-print "News: " 
-for news, link in liste_news:
-    print "- %s (%s)" % (news, link)
+    #print "News: " 
+    #for news, link in liste_news:
+    #    print "- %s (%s)" % (news, link)
